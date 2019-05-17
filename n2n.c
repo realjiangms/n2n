@@ -307,18 +307,20 @@ void peer_list_add(struct peer_info * * list,
 }
 
 
-size_t purge_expired_registrations(struct peer_info ** peer_list) {
-  static time_t last_purge = 0;
+size_t purge_expired_registrations(struct peer_info ** peer_list, time_t* p_last_purge, time_t frequency, time_t registration_timeout) {
   time_t now = time(NULL);
   size_t num_reg = 0;
 
-  if((now - last_purge) < PURGE_REGISTRATION_FREQUENCY) return 0;
+  frequency = frequency > 0 ? frequency : PURGE_REGISTRATION_FREQUENCY;
+  registration_timeout = registration_timeout > 0 ? registration_timeout : REGISTRATION_TIMEOUT;
+
+  if((now - *p_last_purge) < frequency) return 0;
 
   traceEvent(TRACE_INFO, "Purging old registrations");
 
-  num_reg = purge_peer_list(peer_list, now-REGISTRATION_TIMEOUT);
+  num_reg = purge_peer_list(peer_list, now-registration_timeout);
 
-  last_purge = now;
+  (*p_last_purge) = now;
   traceEvent(TRACE_INFO, "Remove %ld registrations", num_reg);
 
   return num_reg;
