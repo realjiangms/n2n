@@ -182,6 +182,7 @@ static void try_send_register(n2n_edge_t * eee,
   struct peer_info * scan = find_peer_by_mac(eee->pending_peers, mac);
   macstr_t mac_buf;
   n2n_sock_str_t sockbuf;
+  time_t now;
 
   if(NULL == scan)
     {
@@ -206,6 +207,21 @@ static void try_send_register(n2n_edge_t * eee,
 
       /* pending_peers now owns scan. */
     } else {
+        now = time(NULL);
+        if(0 != sock_equal(&(scan->sock), peer))
+        {
+            /* The peer has changed public socket. */
+            scan->sock = *peer;
+            scan->last_seen = now;
+            send_register(eee, &(scan->sock));
+        }
+
+        /* UDP could be drop. Resend every other seconds */
+        if (now > scan->last_seen + 1)
+        {
+            scan->last_seen = now;
+            send_register(eee, &(scan->sock));
+        }
   }
 }
 
