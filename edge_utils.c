@@ -202,7 +202,7 @@ static void try_send_register(n2n_edge_t * eee,
 
       /* trace Sending REGISTER */
 
-      send_register(eee, &(scan->sock));
+      send_register(eee, &(scan->sock), mac);
 
       /* pending_peers now owns scan. */
     } else {
@@ -492,7 +492,8 @@ static void send_register_super(n2n_edge_t * eee,
 
 /** Send a REGISTER packet to another edge. */
 void send_register(n2n_edge_t * eee,
-		   const n2n_sock_t * remote_peer) {
+		   const n2n_sock_t * remote_peer,
+		   const n2n_mac_t mac) {
   uint8_t pktbuf[N2N_PKT_BUF_SIZE];
   size_t idx;
   /* ssize_t sent; */
@@ -512,6 +513,7 @@ void send_register(n2n_edge_t * eee,
   idx=0;
   encode_mac(reg.srcMac, &idx, eee->device.mac_addr);
 
+  memcpy(reg.dstMac, mac, N2N_MAC_SIZE);
   idx=0;
   encode_REGISTER(pktbuf, &idx, &cmn, &reg);
 

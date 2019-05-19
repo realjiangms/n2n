@@ -321,7 +321,8 @@ void update_peer_address(n2n_edge_t * eee,
 			 time_t when);
 int is_empty_ip_address(const n2n_sock_t * sock);
 void send_register(n2n_edge_t * eee,
-		   const n2n_sock_t * remote_peer);
+		   const n2n_sock_t * remote_peer,
+		   const n2n_mac_t mac);
 void send_packet2net(n2n_edge_t * eee,
 		     uint8_t *tap_pkt, size_t len);
 void check_peer(n2n_edge_t * eee,
