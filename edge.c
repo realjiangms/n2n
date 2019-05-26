@@ -140,7 +140,7 @@ static void help() {
 	 "-l <supernode host:port>\n"
 	 "    "
 	 "[-p <local port>] [-M <mtu>] "
-	 "[-r] [-E] [-v] [-i <reg_interval>] [-t <mgmt port>] [-b] [-A] [-h]\n\n");
+	 "[-r] [-E] [-v] [-i <reg_interval>] [-T <reg_ttl>] [-t <mgmt port>] [-b] [-A] [-h]\n\n");
 
 #if defined(N2N_CAN_NAME_IFACE)
   printf("-d <tun device>          | tun device name\n");
@@ -152,6 +152,7 @@ static void help() {
   printf("-s <netmask>             | Edge interface netmask in dotted decimal notation (255.255.255.0).\n");
   printf("-l <supernode host:port> | Supernode IP:port\n");
   printf("-i <reg_interval>        | Registration interval, for NAT hole punching (default 20 seconds)\n");
+  printf("-T <reg_ttl>             | TTL for registration packet when UDP NAT hole punching through supernode (default 0 for not set )\n");
   printf("-b                       | Periodically resolve supernode IP\n");
   printf("                         | (when supernodes are running on dynamic IPs)\n");
   printf("-p <local port>          | Fixed local UDP port.\n");
@@ -288,6 +289,10 @@ static int setOption(int optkey, char *optargument, n2n_priv_config_t *ec, n2n_e
 
   case 'i': /* supernode registration interval */
     conf->register_interval = atoi(optargument);
+    break;
+
+  case 'T': /* supernode registration interval */
+    conf->register_ttl = atoi(optarg);
     break;
 
 #if defined(N2N_CAN_NAME_IFACE)
